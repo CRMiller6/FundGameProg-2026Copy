@@ -10,7 +10,7 @@ namespace AICombat {
     public:
         static constexpr const char* Name = "HealerIdleState";
         explicit HealerIdleState(SuperPupUtilities::StateMachine& _stateMachine);
-        void Update(float _dt) override;
+        void Update(float _dt) override {}
     };
 
     class HealState : public SuperPupUtilities::State {
@@ -19,8 +19,8 @@ namespace AICombat {
         float moveSpeed = 4.0f;
         float healRange = 3.0f;
         explicit HealState(SuperPupUtilities::StateMachine& _stateMachine);
-        void Enter() override;
-        void Update(float _dt) override;
+        void Enter() override {}
+        void Update(float _dt) override {}
     private:
         float m_healTimer = 0.0f;
     };

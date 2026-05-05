@@ -11,6 +11,12 @@ namespace {
     ScriptConf healerStateMachineConf = {};
 }
 
+HealerIdleState::HealerIdleState(SuperPupUtilities::StateMachine& _stateMachine) :
+        State(Name, _stateMachine) {}
+
+HealState::HealState(SuperPupUtilities::StateMachine& _stateMachine) :
+        State(Name, _stateMachine) {}
+
 Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
     if (teamTag.empty()) return nullptr;
     
@@ -42,6 +48,11 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
     
     return targetToHeal;
 } 
+
+HealerStateMachine::HealerStateMachine(Canis::Entity& _entity) :
+        SuperPupUtilities::StateMachine(_entity),
+        idleState(*this),
+        healState(*this) {}
 
 void RegisterHealerStateMachineScript(Canis::App& _app) 
 {
