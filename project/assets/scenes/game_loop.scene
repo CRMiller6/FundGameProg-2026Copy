@@ -296,8 +296,8 @@ Entities:
     Tag: Hazard
     Canis::Transform:
       active: true
-      position: [0, 0.75, -9.5]
-      rotation: [0, 3.1415927, 0]
+      position: [-0.37413204, 0.75, -8.169357]
+      rotation: [3.1415908, -8.742277e-08, 3.1415908]
       scale: [1, 1.4, 1]
       parent: 0
       children:
@@ -339,7 +339,7 @@ Entities:
       turnSpeedDegrees: 120
       fireAngleThresholdDegrees: 10
       muzzleOffset: [0, 0.08, 1.25]
-      projectileSpeed: 14
+      projectileSpeed: 1
       projectileLifeTime: 4
       projectileHitImpulse: 6
   - Entity: 910032
@@ -857,7 +857,7 @@ Entities:
     Canis::RectTransform:
       active: true
       position: [0, 0]
-      size: [99, 33]
+      size: [98.99999, 33]
       scale: [1, 1]
       anchorMin: [0.5, 0.5]
       anchorMax: [0.5, 0.5]
@@ -969,3 +969,143 @@ Entities:
         - 910104
         - 910105
         - 910107
+  - Entity: 6257924542011242548
+    Name: LaserTagTurret
+    Tag: Hazard
+    Canis::Transform:
+      active: true
+      position: [-9.27507, 0.75, -7.7036233]
+      rotation: [3.1415908, -8.742277e-08, 3.1415908]
+      scale: [1, 1.4, 1]
+      parent: 0
+      children:
+        - 3575125242145291211
+    Canis::Rigidbody:
+      active: true
+      motionType: 0
+      mass: 1
+      friction: 0.7
+      restitution: 0
+      linearDamping: 0.05
+      angularDamping: 0.05
+      useGravity: false
+      isSensor: false
+      layer: 1
+      mask: 4294967295
+      allowSleeping: true
+      lockRotationX: false
+      lockRotationY: false
+      lockRotationZ: false
+      linearVelocity: [0, 0, 0]
+      angularVelocity: [0, 0, 0]
+    Canis::BoxCollider:
+      active: true
+      size: [1, 1, 1]
+    Canis::Material:
+      color: [0.82, 0.19, 0.22, 1]
+      MaterialAsset:
+        uuid: 17490362529814420531
+    Canis::Model:
+      color: [0.82, 0.19, 0.22, 1]
+      ModelAsset:
+        uuid: 17154083321347000101
+    RollABall::LaserTagTurret:
+      laserPrefab: 16543449644754534652
+      targetTag: Player
+      poolCode: laser_bullet
+      fireInterval: 1.75
+      turnSpeedDegrees: 120
+      fireAngleThresholdDegrees: 10
+      muzzleOffset: [0, 0.08, 1.25]
+      projectileSpeed: 1
+      projectileLifeTime: 4
+      projectileHitImpulse: 6
+  - Entity: 3575125242145291211
+    Name: LaserTagTurret_Barrel
+    Tag: ""
+    Canis::Transform:
+      active: true
+      position: [0, 0.05, -0.9]
+      rotation: [0, 0, 0]
+      scale: [0.35, 0.2, 1.4]
+      parent: 6257924542011242548
+      children:
+        []
+    Canis::Material:
+      color: [0.97, 0.77, 0.32, 1]
+      MaterialAsset:
+        uuid: 17490362529814420531
+    Canis::Model:
+      color: [0.97, 0.77, 0.32, 1]
+      ModelAsset:
+        uuid: 17154083321347000101
+  - Entity: 17687049946991696063
+    Name: LaserTagTurret
+    Tag: Hazard
+    Canis::Transform:
+      active: true
+      position: [7.145063, 0.75, -8.021296]
+      rotation: [3.1415908, -8.742277e-08, 3.1415908]
+      scale: [1, 1.4, 1]
+      parent: 0
+      children:
+        - 11162468748577930587
+    Canis::Rigidbody:
+      active: true
+      motionType: 0
+      mass: 1
+      friction: 0.7
+      restitution: 0
+      linearDamping: 0.05
+      angularDamping: 0.05
+      useGravity: false
+      isSensor: false
+      layer: 1
+      mask: 4294967295
+      allowSleeping: true
+      lockRotationX: false
+      lockRotationY: false
+      lockRotationZ: false
+      linearVelocity: [0, 0, 0]
+      angularVelocity: [0, 0, 0]
+    Canis::BoxCollider:
+      active: true
+      size: [1, 1, 1]
+    Canis::Material:
+      color: [0.82, 0.19, 0.22, 1]
+      MaterialAsset:
+        uuid: 17490362529814420531
+    Canis::Model:
+      color: [0.82, 0.19, 0.22, 1]
+      ModelAsset:
+        uuid: 17154083321347000101
+    RollABall::LaserTagTurret:
+      laserPrefab: 16543449644754534652
+      targetTag: Player
+      poolCode: laser_bullet
+      fireInterval: 1.75
+      turnSpeedDegrees: 120
+      fireAngleThresholdDegrees: 10
+      muzzleOffset: [0, 0.08, 1.25]
+      projectileSpeed: 2
+      projectileLifeTime: 4
+      projectileHitImpulse: 6
+  - Entity: 11162468748577930587
+    Name: LaserTagTurret_Barrel
+    Tag: ""
+    Canis::Transform:
+      active: true
+      position: [0, 0.05, -0.9]
+      rotation: [0, 0, 0]
+      scale: [0.35, 0.2, 1.4]
+      parent: 17687049946991696063
+      children:
+        []
+    Canis::Material:
+      color: [0.97, 0.77, 0.32, 1]
+      MaterialAsset:
+        uuid: 17490362529814420531
+    Canis::Model:
+      color: [0.97, 0.77, 0.32, 1]
+      ModelAsset:
+        uuid: 17154083321347000101
