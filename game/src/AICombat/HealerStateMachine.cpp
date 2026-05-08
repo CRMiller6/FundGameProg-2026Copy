@@ -107,6 +107,42 @@ void HealerStateMachine::ChangeState(const std::string& _stateName)
             Canis::Debug::Log("%s -> %s", entity.name.c_str(), _stateName.c_str());
     }
 
+    void BrawlerStateMachine::TakeDamage(int _damage)
+    {
+        if (!IsAlive())
+            return;
+
+        const int damageToApply = std::max(_damage, 0);
+        if (damageToApply <= 0)
+            return;
+
+        m_currentHealth = std::max(0, m_currentHealth - damageToApply);
+        PlayHitSfx();
+
+        if (m_hasBaseColor && entity.HasComponent<Canis::Material>())
+        {
+            Canis::Material& material = entity.GetComponent<Canis::Material>();
+            const float healthRatio = (maxHealth > 0)
+                ? (static_cast<float>(m_currentHealth) / static_cast<float>(maxHealth))
+                : 0.0f;
+
+            material.color = Canis::Vector4(
+                m_baseColor.x * (0.5f + (0.5f * healthRatio)),
+                m_baseColor.y * (0.5f + (0.5f * healthRatio)),
+                m_baseColor.z * (0.5f + (0.5f * healthRatio)),
+                m_baseColor.w);
+        }
+
+        if (m_currentHealth > 0)
+            return;
+
+        if (logStateChanges)
+            Canis::Debug::Log("%s was defeated.", entity.name.c_str());
+
+        SpawnDeathEffect();
+        entity.Destroy();
+    }
+
 
 
 DEFAULT_UNREGISTER_SCRIPT(healerStateMachineConf, HealerStateMachine);
