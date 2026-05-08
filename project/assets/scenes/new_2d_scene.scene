@@ -1,0 +1,245 @@
+Environment:
+  ClearColor: [0.42471647, 0.85784316, 0.80688703, 1]
+Entities:
+  - Entity: 752832027556229489
+    Name: Camera
+    Tag: MainCamera
+    Canis::RectTransform:
+      active: true
+      position: [0, 0]
+      size: [32, 32]
+      scale: [1, 1]
+      anchorMin: [0.5, 0.5]
+      anchorMax: [0.5, 0.5]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        []
+    Canis::Camera2D:
+      position: [0, 0]
+      scale: 1
+  - Entity: 13303910474606696800
+    Name: Canvas
+    Tag: ""
+    Canis::Canvas:
+      active: true
+      renderMode: 0
+      scaleMode: 1
+      screenSize: [1280, 800]
+    Canis::RectTransform:
+      active: true
+      position: [0, 0]
+      size: [0, 0]
+      scale: [1, 1]
+      anchorMin: [0, 0]
+      anchorMax: [1, 1]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        []
+  - Entity: 208896853212074174
+    Name: Welcome
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, 0]
+      size: [261, 33]
+      scale: [1, 1]
+      anchorMin: [0.5, 1]
+      anchorMax: [0.5, 1]
+      pivot: [0.5, 1]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        []
+    Canis::Text:
+      text: WELCOME TO THE GAME
+      color: [0.06503158, 0.027297191, 0.3480392, 1]
+      alignment: 2
+      horizontalBoundary: 0
+      FontAsset:
+        uuid: 14618725492368012463
+        fontSize: 32
+  - Entity: 16778790653017408864
+    Name: PlayButt
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, 50]
+      size: [160, 48]
+      scale: [1, 1]
+      anchorMin: [0.5, 0.5]
+      anchorMax: [0.5, 0.5]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        - 10455498997636003882
+    Canis::Sprite2D:
+      color: [0.14, 0.18, 0.24, 0.98]
+      uv: [0, 0, 1, 1]
+      flipX: false
+      flipY: false
+      TextureAsset:
+        uuid: 16060716090729117806
+    Canis::UIButton:
+      active: true
+      targetEntity: 0
+      targetScript: ""
+      actionName: ""
+      hoverColor: [0.19, 0.25, 0.34, 1]
+      pressedColor: [0.1, 0.14, 0.18, 1]
+      hoverScale: 1.03
+      pressedScale: 0.98
+  - Entity: 10455498997636003882
+    Name: Button Label
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, 0]
+      size: [83, 33]
+      scale: [1, 1]
+      anchorMin: [0.5, 0.5]
+      anchorMax: [0.5, 0.5]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.00090000004
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 16778790653017408864
+      children:
+        []
+    Canis::Text:
+      text: Button
+      color: [1, 1, 1, 1]
+      alignment: 2
+      horizontalBoundary: 0
+      FontAsset:
+        uuid: 14618725492368012463
+        fontSize: 32
+  - Entity: 2169684683271867014
+    Name: PlayTxt
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, 50]
+      size: [52, 33]
+      scale: [1, 1]
+      anchorMin: [0.5, 0.5]
+      anchorMax: [0.5, 0.5]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        []
+    Canis::Text:
+      text: Play
+      color: [1, 1, 1, 1]
+      alignment: 2
+      horizontalBoundary: 0
+      FontAsset:
+        uuid: 14618725492368012463
+        fontSize: 32
+  - Entity: 953799877088696360
+    Name: ExitButt
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, -50]
+      size: [160, 48]
+      scale: [1, 1]
+      anchorMin: [0.5, 0.5]
+      anchorMax: [0.5, 0.5]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        - 6686909969266547033
+    Canis::Sprite2D:
+      color: [0.14, 0.18, 0.24, 0.98]
+      uv: [0, 0, 1, 1]
+      flipX: false
+      flipY: false
+      TextureAsset:
+        uuid: 16060716090729117806
+    Canis::UIButton:
+      active: true
+      targetEntity: 0
+      targetScript: ""
+      actionName: ""
+      hoverColor: [0.19, 0.25, 0.34, 1]
+      pressedColor: [0.1, 0.14, 0.18, 1]
+      hoverScale: 1.03
+      pressedScale: 0.98
+  - Entity: 6686909969266547033
+    Name: Button Label 2
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, 0]
+      size: [83, 33]
+      scale: [1, 1]
+      anchorMin: [0.5, 0.5]
+      anchorMax: [0.5, 0.5]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.00090000004
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 953799877088696360
+      children:
+        []
+    Canis::Text:
+      text: Button
+      color: [1, 1, 1, 1]
+      alignment: 2
+      horizontalBoundary: 0
+      FontAsset:
+        uuid: 14618725492368012463
+        fontSize: 32
+  - Entity: 6986697889992877578
+    Name: ExitTxt
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, -50]
+      size: [43, 33]
+      scale: [1, 1]
+      anchorMin: [0.5, 0.5]
+      anchorMax: [0.5, 0.5]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        []
+    Canis::Text:
+      text: Exit
+      color: [1, 1, 1, 1]
+      alignment: 2
+      horizontalBoundary: 0
+      FontAsset:
+        uuid: 14618725492368012463
+        fontSize: 32
