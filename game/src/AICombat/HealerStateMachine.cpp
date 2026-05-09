@@ -17,17 +17,37 @@ HealerIdleState::HealerIdleState(SuperPupUtilities::StateMachine& _stateMachine)
         State(Name, _stateMachine) {}
 
 HealState::HealState(SuperPupUtilities::StateMachine& _stateMachine) :
-        State(Name, _stateMachine) {}
+        State(Name, _stateMachine) {
+
+        }
 
 Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
-    if (teamTag.empty()) return nullptr;
+    Debug::Log("FindWoundedTeammate starts"); 
+    if (teamTag.empty()) {
+        return nullptr;
+        Debug::Log("teamTag is empty");
+    }
+    else
+    {
+        Debug::Log("teamTag is not empty");
+    }
+    
     
     Canis::Entity* targetToHeal = nullptr;
+    if (!targetToHeal)
+    {
+        Debug::Log("no target");
+    }
+    else{
+        Debug::Log("yes target");
+    }
+
     int lowestHealthFound = 999999;
 
     // Canis::Vector3 myPos = entity.GetComponent<Canis::Transform>().GetGlobalPosition();
 
     for (Canis::Entity* ally : entity.scene.GetEntitiesWithTag(teamTag)) {
+        Debug::Log("FWT for loop");
         if (!ally || ally == &entity || !ally->active) continue;
         
         BrawlerStateMachine* brawler = ally->GetScript<BrawlerStateMachine>();
@@ -52,6 +72,7 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
     }
     
     return targetToHeal;
+    Debug::Log("FWT return targetToHeal (end)");
 } 
 
 HealerStateMachine::HealerStateMachine(Canis::Entity& _entity) :

@@ -10,9 +10,9 @@ Entities:
     Tag: MainCamera
     Canis::Transform:
       active: true
-      position: [0, 8, 13]
-      rotation: [-0.52, 0, 0]
-      scale: [1, 1, 1]
+      position: [0, 10.001317, 13]
+      rotation: [-0.79175675, -0, 0]
+      scale: [1, 0.9999982, 0.99999803]
       parent: 0
       children:
         []
@@ -245,7 +245,7 @@ Entities:
       ModelAsset:
         uuid: 17154083321347000101
     AICombat::HealerStateMachine:
-      moveSpeed: 4
+      moveSpeed: 400000
       maxHealth: 30
       hitSfxPath1:
         uuid: 9101673412543458587
