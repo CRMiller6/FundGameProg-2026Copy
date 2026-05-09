@@ -99,6 +99,9 @@ void HealerStateMachine::Update(float _dt)
 
 }
 
+ChaseState::ChaseState(SuperPupUtilities::StateMachine& _stateMachine) :
+        State(Name, _stateMachine) {}
+
 void HealerStateMachine::MoveTowards(const Canis::Entity& _target, float _speed, float _dt)
     {
         if (!entity.HasComponent<Canis::Transform>() || !_target.HasComponent<Canis::Transform>())
