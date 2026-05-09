@@ -1,6 +1,8 @@
 #include <AICombat/HealerStateMachine.hpp>
 #include <AICombat/BrawlerStateMachine.hpp>
+
 #include <Canis/App.hpp>
+#include <Canis/AudioManager.hpp>
 #include <Canis/ConfigHelper.hpp>
 #include <Canis/Debug.hpp>
 #include <algorithm>
@@ -52,10 +54,18 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
 HealerStateMachine::HealerStateMachine(Canis::Entity& _entity) :
         SuperPupUtilities::StateMachine(_entity),
         idleState(*this),
+        chaseState(*this),
         healState(*this) {}
 
 void RegisterHealerStateMachineScript(Canis::App& _app) 
 {
+    RegisterAccessorProperty(healerStateMachineConf, AICombat::HealerStateMachine, chaseState, moveSpeed);
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, maxHealth);
+
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, hitSfxPath1);
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, hitSfxPath2);
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, hitSfxVolume);
+        
     DEFAULT_CONFIG_AND_REQUIRED(
             healerStateMachineConf,
             AICombat::HealerStateMachine,
@@ -70,11 +80,24 @@ void RegisterHealerStateMachineScript(Canis::App& _app)
     _app.RegisterScript(healerStateMachineConf);
 } 
 
+DEFAULT_UNREGISTER_SCRIPT(healerStateMachineConf, HealerStateMachine);
+
+
 void HealerStateMachine::Create() {}
 
-void HealerStateMachine::Ready() {}
+void HealerStateMachine::Ready() 
+{
+    m_currentHealth = std::max(maxHealth, 1);
 
-void HealerStateMachine::Update(float _dt) {}
+    m_useFirstHitSfx = true;
+}
+
+void HealerStateMachine::Update(float _dt)  
+{
+    if (!IsAlive())
+            return;
+
+}
 
 void HealerStateMachine::MoveTowards(const Canis::Entity& _target, float _speed, float _dt)
     {
@@ -107,7 +130,7 @@ void HealerStateMachine::ChangeState(const std::string& _stateName)
             Canis::Debug::Log("%s -> %s", entity.name.c_str(), _stateName.c_str());
     }
 
-    void BrawlerStateMachine::TakeDamage(int _damage)
+    void HealerStateMachine::TakeDamage(int _damage)
     {
         if (!IsAlive())
             return;
@@ -144,7 +167,23 @@ void HealerStateMachine::ChangeState(const std::string& _stateName)
     }
 
 
+    void HealerStateMachine::PlayHitSfx()
+    {
+        const Canis::AudioAssetHandle& selectedSfx = m_useFirstHitSfx ? hitSfxPath1 : hitSfxPath2;
+        m_useFirstHitSfx = !m_useFirstHitSfx;
 
-DEFAULT_UNREGISTER_SCRIPT(healerStateMachineConf, HealerStateMachine);
+        if (selectedSfx.Empty())
+            return;
+
+        Canis::AudioManager::PlaySFX(selectedSfx, std::clamp(hitSfxVolume, 0.0f, 1.0f));
+    }
+
+
+
+
+    bool BrawlerStateMachine::IsAlive() const
+    {
+        return m_currentHealth > 0;
+    }
 
 } 
