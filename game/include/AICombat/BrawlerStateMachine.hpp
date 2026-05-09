@@ -56,6 +56,7 @@ namespace AICombat
         float detectionRange = 20.0f;
         Canis::Vector3 bodyColliderSize = Canis::Vector3(1.0f);
         int maxHealth = 40;
+        bool isBeingHealed = false;
         bool logStateChanges = true;
         Canis::Entity* hammerVisual = nullptr;
         Canis::AudioAssetHandle hitSfxPath1 = { .path = "assets/audio/sfx/hit_1.ogg" };
@@ -89,6 +90,11 @@ namespace AICombat
         void TakeDamage(int _damage);
         bool IsAlive() const;
 
+        void Heal(int _amount) {
+            if (!IsAlive()) return;
+            m_currentHealth = std::min(maxHealth, m_currentHealth + _amount);
+        }
+
     private:
         void PlayHitSfx();
         void SpawnDeathEffect();
@@ -102,4 +108,6 @@ namespace AICombat
 
     void RegisterBrawlerStateMachineScript(Canis::App& _app);
     void UnRegisterBrawlerStateMachineScript(Canis::App& _app);
+
+
 }

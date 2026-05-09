@@ -48,6 +48,9 @@ namespace AICombat {
         bool logStateChanges = true;
         Canis::Entity* currentTarget = nullptr;
 
+        float moveSpeed = 5.0f;
+        float m_healAccumulator = 0.0f;
+
         explicit HealerStateMachine(Canis::Entity& _entity);
 
         HealerIdleState idleState;
@@ -59,7 +62,7 @@ namespace AICombat {
         void Update(float _dt) override;
 
         Canis::Entity* FindWoundedTeammate() const;
-        void MoveTowards(const Canis::Entity& _target, float _speed, float _dt);
+        void MoveTowards(Canis::Vector3 _targetpos, float _speed, float _dt);
         void ChangeState(const std::string& _stateName);
         void TakeDamage(int _damage);
 

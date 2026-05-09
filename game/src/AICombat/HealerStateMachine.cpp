@@ -24,8 +24,8 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
     
     Canis::Entity* targetToHeal = nullptr;
     int lowestHealthFound = 999999;
-    
-    Canis::Vector3 myPos = entity.GetComponent<Canis::Transform>().GetGlobalPosition();
+
+    // Canis::Vector3 myPos = entity.GetComponent<Canis::Transform>().GetGlobalPosition();
 
     for (Canis::Entity* ally : entity.scene.GetEntitiesWithTag(teamTag)) {
         if (!ally || ally == &entity || !ally->active) continue;
@@ -34,16 +34,19 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
         
         if (brawler && brawler->IsAlive()) {
             int currentHP = brawler->GetCurrentHealth();
+            int maxHP = brawler->maxHealth;
             
-            if (currentHP < 40) { 
-                float dist = glm::distance(myPos, ally->GetComponent<Canis::Transform>().GetGlobalPosition());
+            if (currentHP < maxHP) { 
+                // float dist = glm::distance(myPos, ally->GetComponent<Canis::Transform>().GetGlobalPosition());
                 
-                if (dist <= detectionRange) {
-                    if (currentHP < lowestHealthFound) {
-                        lowestHealthFound = currentHP;
-                        targetToHeal = ally;
+                // if (dist <= detectionRange) {
+                    if (currentHP < maxHP) {
+                        if (currentHP < lowestHealthFound){
+                            lowestHealthFound = currentHP;
+                            targetToHeal = ally;
+                        }
                     }
-                }
+                // }
             }
         }
     }
@@ -59,7 +62,9 @@ HealerStateMachine::HealerStateMachine(Canis::Entity& _entity) :
 
 void RegisterHealerStateMachineScript(Canis::App& _app) 
 {
-    RegisterAccessorProperty(healerStateMachineConf, AICombat::HealerStateMachine, chaseState, moveSpeed);
+    // RegisterAccessorProperty(healerStateMachineConf, AICombat::HealerStateMachine, chaseState, moveSpeed);
+
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, moveSpeed);
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, maxHealth);
 
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, hitSfxPath1);
@@ -97,6 +102,33 @@ void HealerStateMachine::Update(float _dt)
     if (!IsAlive())
             return;
 
+    Canis::Entity* target = FindWoundedTeammate();
+    if (!target) return;
+
+    //Canis::Entity* target = FindWoundedTeammate();
+
+    if (target) {
+        BrawlerStateMachine* brawler = target->GetScript<BrawlerStateMachine>();
+
+        Canis::Transform& targetTrans = target->GetComponent<Canis::Transform>();
+
+        float angle = targetTrans.rotation.y;
+
+        Canis::Vector3 forward = { sin(angle), 0.0f, cos(angle)};
+
+        Canis::Vector3 targetPos = targetTrans.GetGlobalPosition();
+        Canis::Vector3 behindPos = targetTrans.GetGlobalPosition() - (forward * 2.0f);
+
+        MoveTowards(behindPos, moveSpeed, _dt);
+
+        m_healAccumulator += 2.0f * _dt;
+        if (m_healAccumulator >= 1.0f) {
+            int healAmount = static_cast<int>(m_healAccumulator);
+            brawler->Heal(healAmount);
+            m_healAccumulator -= static_cast<float>(healAmount);
+        }
+    }
+
 }
 
 HealerChaseState::HealerChaseState(SuperPupUtilities::StateMachine& _stateMachine) :
@@ -106,17 +138,17 @@ void HealerChaseState::Enter() {}
 
 void HealerChaseState::Update(float) {}
 
-void HealerStateMachine::MoveTowards(const Canis::Entity& _target, float _speed, float _dt)
-    {
-        if (!entity.HasComponent<Canis::Transform>() || !_target.HasComponent<Canis::Transform>())
+void HealerStateMachine::MoveTowards(Canis::Vector3 _targetPos, float _speed, float _dt){
+        if (!entity.HasComponent<Canis::Transform>())// || !_target.HasComponent<Canis::Transform>())
             return;
 
         Canis::Transform& transform = entity.GetComponent<Canis::Transform>();
         const Canis::Vector3 selfPosition = transform.GetGlobalPosition();
-        Canis::Vector3 direction = _target.GetComponent<Canis::Transform>().GetGlobalPosition() - selfPosition;
+
+        Canis::Vector3 direction = _targetPos - selfPosition;       //.GetComponent<Canis::Transform>().GetGlobalPosition() - selfPosition;
         direction.y = 0.0f;
 
-        if (glm::dot(direction, direction) <= 0.0001f)
+        if (glm::dot(direction, direction) <= 0.0001f) //length(direction) < 0.1f)
             return;
 
         direction = glm::normalize(direction);
