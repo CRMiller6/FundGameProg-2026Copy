@@ -99,8 +99,12 @@ void HealerStateMachine::Update(float _dt)
 
 }
 
-ChaseState::ChaseState(SuperPupUtilities::StateMachine& _stateMachine) :
+HealerChaseState::HealerChaseState(SuperPupUtilities::StateMachine& _stateMachine) :
         State(Name, _stateMachine) {}
+
+void HealerChaseState::Enter() {}
+
+void HealerChaseState::Update(float) {}
 
 void HealerStateMachine::MoveTowards(const Canis::Entity& _target, float _speed, float _dt)
     {
@@ -184,7 +188,9 @@ void HealerStateMachine::ChangeState(const std::string& _stateName)
 
 
 
-    bool BrawlerStateMachine::IsAlive() const
+    void HealerStateMachine::SpawnDeathEffect() {}
+
+    bool HealerStateMachine::IsAlive() const
     {
         return m_currentHealth > 0;
     }
