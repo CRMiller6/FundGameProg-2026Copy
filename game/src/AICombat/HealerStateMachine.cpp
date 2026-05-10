@@ -22,6 +22,10 @@ HealState::HealState(SuperPupUtilities::StateMachine& _stateMachine) :
         }
 
 Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
+    if (healCooldown > 0.0f) {
+        return nullptr;
+    }
+
     Debug::Log("FindWoundedTeammate starts"); 
     if (teamTag.empty()) {
         Debug::Log("teamTag is empty");
@@ -35,29 +39,16 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
     Debug::Log("FWT");
     
     Canis::Entity* targetToHeal = nullptr;
-    // if (!targetToHeal)
-    // {
-    //     Debug::Log("no target");
-    // }
-    // else{
-    //     Debug::Log("yes target");
-    // }
 
     int lowestHealthFound = 999999;
 
-    // Canis::Vector3 myPos = entity.GetComponent<Canis::Transform>().GetGlobalPosition();
-
     for (Canis::Entity* ally : entity.scene.GetEntitiesWithTag(teamTag)) {
         Debug::Log("FWT for loop");
-        if (!ally || ally == &entity || !ally->active) {
-            Debug::Log ("!ally || ally == &entity || !ally->active");
-        }
         
         BrawlerStateMachine* brawler = ally->GetScript<BrawlerStateMachine>();
         Debug::Log ("got the brawlerstatemachine script in FWT");
         
         if (brawler && brawler->IsAlive()) {
-            Debug::Log ("if brawler is alive");
             int currentHP = brawler->GetCurrentHealth();
             int maxHP = brawler->maxHealth;
 
@@ -70,28 +61,17 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
 
             brawler -> Heal(newHP);
 
+            // const_cast<HealerStateMachine*>(this)->healCooldown = healDelay;
+                        
+            Debug::Log("how often is this triggering?");
 
-
-            
-            // if (currentHP < maxHP) { 
-                // Debug::Log ("currentHP < maxHP");
-                // float dist = glm::distance(myPos, ally->GetComponent<Canis::Transform>().GetGlobalPosition());
-                
-                // if (dist <= detectionRange) {
-                    // if (currentHP < maxHP) {
-                        // if (currentHP < lowestHealthFound){
-                        //     Debug::Log("");
-                            // lowestHealthFound = currentHP;
-                            // targetToHeal = ally;
-                        // }
-                    // }
-                // }
-            // }
+            return ally;
         }
     }
     
     return targetToHeal;
     Debug::Log("FWT return targetToHeal (end)");
+    return nullptr;
 } 
 
 HealerStateMachine::HealerStateMachine(Canis::Entity& _entity) :
@@ -140,6 +120,11 @@ void HealerStateMachine::Ready()
 
 void HealerStateMachine::Update(float _dt)  
 {
+    if (healCooldown > 0.0f) {
+        healCooldown -= _dt;
+    }
+    else{
+    
     if (!IsAlive())
             return;
 
@@ -167,7 +152,7 @@ void HealerStateMachine::Update(float _dt)
             m_healAccumulator -= static_cast<float>(healAmount);
         }
     }
-
+    }
 }
 
 HealerChaseState::HealerChaseState(SuperPupUtilities::StateMachine& _stateMachine) :

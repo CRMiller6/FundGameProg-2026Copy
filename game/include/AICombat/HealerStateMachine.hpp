@@ -38,6 +38,9 @@ namespace AICombat {
 
     class HealerStateMachine : public SuperPupUtilities::StateMachine {
     public:
+        float healCooldown = 0.0f;
+        float healDelay = 2.0f;
+
         static constexpr const char* ScriptName = "AICombat::HealerStateMachine";
         
         std::string teamTag = ""; 

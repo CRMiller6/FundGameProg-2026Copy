@@ -657,7 +657,7 @@ Entities:
     Tag: Red
     Canis::Transform:
       active: true
-      position: [2.3478286, 1, -1.7619125]
+      position: [2.3478286, 1, -0.121548235]
       rotation: [3.1415908, -0.9838023, 3.1415908]
       scale: [0.9999978, 1, 0.9999987]
       parent: 0
