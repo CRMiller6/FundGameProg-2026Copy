@@ -571,7 +571,7 @@ Entities:
       laserPrefab: 16543449644754534652
       targetTag: Blue
       poolCode: laser_bullet
-      fireInterval: 0.5
+      fireInterval: 5
       turnSpeedDegrees: 120
       fireAngleThresholdDegrees: 8
       muzzleOffset: [2, 2, 2]
