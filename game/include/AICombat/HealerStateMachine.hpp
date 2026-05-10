@@ -75,6 +75,8 @@ namespace AICombat {
         Canis::AudioAssetHandle hitSfxPath2 = { .path = "assets/audio/sfx/hit_2.ogg" };
         float hitSfxVolume = 1.0f;
 
+        Canis::SceneAssetHandle deathEffectPrefab = { .path = "assets/prefabs/brawler_death_particles.scene" };
+
     private:
         void PlayHitSfx();
         void SpawnDeathEffect();
