@@ -2,13 +2,21 @@
 
 #include <Canis/Entity.hpp>
 
+#include <SuperPupUtilities/StateMachine.hpp>
+
 #include <string>
 
 namespace AICombat
 {
-    class MageUnit : public Canis::ScriptableEntity
+    class MageUnit : public SuperPupUtilities::StateMachine
     {
     public:
+        int maxHealth = 40;
+        void Heal(int _amount) {
+            if (!IsAlive()) return;
+            m_currentHealth = std::min(maxHealth, m_currentHealth + _amount);
+        }
+
         static constexpr const char* ScriptName = "AICombat::MageUnit";
 
         Canis::SceneAssetHandle laserPrefab = {};
@@ -21,15 +29,25 @@ namespace AICombat
         float projectileSpeed = 14.0f;
         float projectileLifeTime = 4.0f;
         float projectileHitImpulse = 6.0f;
-
-        explicit MageUnit(Canis::Entity& _entity) : Canis::ScriptableEntity(_entity) {}
+        Canis::SceneAssetHandle deathEffectPrefab = { .path = "assets/prefabs/brawler_death_particles.scene" };
 
         void Create() override;
         void Ready() override;
         void Destroy() override;
         void Update(float _dt) override;
+        void TakeDamage(int _damage);
+        bool IsAlive() const;
+        void Healing(int newHealth);
+        int GetCurrentHealth() const;
+
+        bool logStateChanges = true;
+
+        Canis::AudioAssetHandle hitSfxPath1 = { .path = "assets/audio/sfx/hit_1.ogg" };
+        Canis::AudioAssetHandle hitSfxPath2 = { .path = "assets/audio/sfx/hit_2.ogg" };
+        float hitSfxVolume = 1.0f;
 
     private:
+        int m_currentHealth = 0;
         float m_fireCooldown = 0.0f;
         Canis::Entity* m_target = nullptr;
 
@@ -37,6 +55,13 @@ namespace AICombat
         Canis::Vector3 GetMuzzlePosition(const Canis::Transform& _transform) const;
         float RotateTowards(Canis::Transform& _transform, const Canis::Vector3& _direction, float _dt) const;
         void Fire(const Canis::Vector3& _position, const Canis::Vector3& _direction);
+
+        void PlayHitSfx();
+        Canis::Vector4 m_baseColor = Canis::Vector4(1.0f);
+        bool m_hasBaseColor = false;
+
+        void SpawnDeathEffect();
+        bool m_useFirstHitSfx = true;
     };
 
     void RegisterMageUnitScript(Canis::App& _app);
