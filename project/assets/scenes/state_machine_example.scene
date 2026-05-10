@@ -568,13 +568,13 @@ Entities:
       ModelAsset:
         uuid: 17154083321347000101
     AICombat::MageUnit:
-      laserPrefab: 14076441856737823919
+      laserPrefab: 16543449644754534652
       targetTag: Blue
       poolCode: laser_bullet
       fireInterval: 5
       turnSpeedDegrees: 120
       fireAngleThresholdDegrees: 8
-      muzzleOffset: [0.75, 0.2, -1.5]
+      muzzleOffset: [2, 2, 2]
       projectileSpeed: 2
       projectileLifeTime: 20
       projectileHitImpulse: 6
@@ -808,5 +808,5 @@ Entities:
       logWarnings: true
       pools:
         - code: laser_bullet
-          prefab: 14076441856737823919
+          prefab: 16543449644754534652
           size: 6
