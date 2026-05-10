@@ -342,6 +342,7 @@ namespace AICombat
 
     void BrawlerStateMachine::TakeDamage(int _damage)
     {
+        Debug::Log("Brawler Take Damager");
         if (!IsAlive())
             return;
 
