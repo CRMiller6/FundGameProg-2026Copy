@@ -26,8 +26,8 @@ Entities:
       ModelAsset:
         uuid: 17154083321347000101
     SuperPupUtilities::Bullet:
-      damage: 1
-      speed: 14
+      damage: 10
+      speed: 2
       lifeTime: 4
       gravity: 0
       destroyOnImpact: true
@@ -36,4 +36,4 @@ Entities:
       collisionMask: 4294967295
       hitImpulse: 6
       targetTags:
-        - Player
+        - Blue

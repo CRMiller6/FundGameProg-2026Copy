@@ -1,9 +1,7 @@
 #pragma once
 
 #include <Canis/Entity.hpp>
-
 #include <SuperPupUtilities/StateMachine.hpp>
-
 #include <string>
 
 namespace AICombat

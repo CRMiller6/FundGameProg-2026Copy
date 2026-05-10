@@ -246,6 +246,8 @@ Entities:
         uuid: 17154083321347000101
     AICombat::HealerStateMachine:
       moveSpeed: 5
+      detectionRange: 20
+      healAmount: 2
       maxHealth: 30
       teamTag: Red
       hitSfxPath1:
@@ -530,7 +532,7 @@ Entities:
     Tag: Red
     Canis::Transform:
       active: true
-      position: [5.4071918, 1, -5.965187]
+      position: [-0.2133919, 1, -6.880868]
       rotation: [3.1415794, -1.0773152, 3.1415749]
       scale: [0.9999932, 1, 0.9999946]
       parent: 0
@@ -573,9 +575,19 @@ Entities:
       turnSpeedDegrees: 120
       fireAngleThresholdDegrees: 8
       muzzleOffset: [0.75, 0.2, -1.5]
-      projectileSpeed: 14
-      projectileLifeTime: 4
+      projectileSpeed: 2
+      projectileLifeTime: 20
       projectileHitImpulse: 6
+      maxHealth: 40
+      logStateChanges: true
+      deathEffectPrefab: 1932126691914227009
+      hitSfxPath1:
+        uuid: 9101673412543458587
+        path: assets/audio/sfx/hit_1.ogg
+      hitSfxPath2:
+        uuid: 15814014518013310489
+        path: assets/audio/sfx/hit_2.ogg
+      hitSfxVolume: 1
   - Entity: 12102069369145899716
     Name: Right Hand Root
     Tag: ""
@@ -789,3 +801,12 @@ Entities:
       color: [0.78, 0.9, 1, 1]
       ModelAsset:
         uuid: 17154083321347000101
+  - Entity: 16524016133082947697
+    Name: Mage Pool
+    Tag: ""
+    SuperPupUtilities::SimpleObjectPool:
+      logWarnings: true
+      pools:
+        - code: laser_bullet
+          prefab: 14076441856737823919
+          size: 6

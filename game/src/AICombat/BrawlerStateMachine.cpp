@@ -81,7 +81,7 @@ namespace AICombat
     {
         BrawlerStateMachine* brawlerStatMachine = dynamic_cast<BrawlerStateMachine*>(m_stateMachine);
         if (brawlerStatMachine == nullptr)
-            return;
+            return; //HealerStateMachine* healerStateMachine = dynamic_cast<HealerStateMachine*>();
 
         if (Canis::Entity* target = brawlerStatMachine->FindClosestTarget())
             brawlerStatMachine->FaceTarget(*target);
