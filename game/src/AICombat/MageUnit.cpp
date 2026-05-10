@@ -15,6 +15,9 @@ namespace AICombat
 
     Canis::ScriptConf MageUnitConf = {};
 
+    MageUnit::MageUnit(Canis::Entity& _entity) :
+        SuperPupUtilities::StateMachine(_entity) {}
+
     void RegisterMageUnitScript(Canis::App& _app)
     {
         REGISTER_PROPERTY(MageUnitConf, AICombat::MageUnit, laserPrefab);
@@ -35,6 +38,11 @@ namespace AICombat
         REGISTER_PROPERTY(MageUnitConf, AICombat::MageUnit, hitSfxPath1);
         REGISTER_PROPERTY(MageUnitConf, AICombat::MageUnit, hitSfxPath2);
         REGISTER_PROPERTY(MageUnitConf, AICombat::MageUnit, hitSfxVolume);
+
+        DEFAULT_CONFIG_AND_REQUIRED(
+            MageUnitConf,
+            AICombat::MageUnit,
+            Canis::Transform);
 
         MageUnitConf.DEFAULT_DRAW_INSPECTOR(AICombat::MageUnit);
 

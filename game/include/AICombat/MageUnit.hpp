@@ -31,6 +31,8 @@ namespace AICombat
         float projectileHitImpulse = 6.0f;
         Canis::SceneAssetHandle deathEffectPrefab = { .path = "assets/prefabs/brawler_death_particles.scene" };
 
+        explicit MageUnit(Canis::Entity& _entity);
+
         void Create() override;
         void Ready() override;
         void Destroy() override;

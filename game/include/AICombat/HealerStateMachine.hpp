@@ -45,8 +45,8 @@ namespace AICombat {
         
         std::string teamTag = ""; 
         float detectionRange = 20.0f;
-        int healAmount = 1;
-        int maxHealth;
+        int healAmount = 2;
+        int maxHealth = 30;
         float healInterval = 5.0f;
         bool logStateChanges = true;
         Canis::Entity* currentTarget = nullptr;

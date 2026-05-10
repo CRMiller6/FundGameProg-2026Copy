@@ -6,6 +6,7 @@
 #include <Canis/ConfigHelper.hpp>
 #include <Canis/Debug.hpp>
 #include <algorithm>
+#include <cmath>
 
 namespace AICombat {
 
@@ -26,52 +27,41 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
         return nullptr;
     }
 
-    Debug::Log("FindWoundedTeammate starts"); 
-    if (teamTag.empty()) {
-        Debug::Log("teamTag is empty");
+    if (teamTag.empty() || !entity.HasComponent<Canis::Transform>()) {
         return nullptr;
     }
-    else
-    {
-        Debug::Log("teamTag is not empty");
-    }
-    
-    Debug::Log("FWT");
-    
-    Canis::Entity* targetToHeal = nullptr;
 
+    const Canis::Vector3 healerPosition = entity.GetComponent<Canis::Transform>().GetGlobalPosition();
+    Canis::Entity* targetToHeal = nullptr;
     int lowestHealthFound = 999999;
 
     for (Canis::Entity* ally : entity.scene.GetEntitiesWithTag(teamTag)) {
-        Debug::Log("FWT for loop");
+        if (ally == nullptr || ally == &entity || !ally->active)
+            continue;
+
+        if (!ally->HasComponent<Canis::Transform>())
+            continue;
         
         BrawlerStateMachine* brawler = ally->GetScript<BrawlerStateMachine>();
-        Debug::Log ("got the brawlerstatemachine script in FWT");
+        if (brawler == nullptr || !brawler->IsAlive())
+            continue;
         
-        if (brawler && brawler->IsAlive()) {
-            int currentHP = brawler->GetCurrentHealth();
-            int maxHP = brawler->maxHealth;
+        const int currentHP = brawler->GetCurrentHealth();
+        const int maxHP = std::max(brawler->maxHealth, 1);
+        if (currentHP >= maxHP)
+            continue;
 
-            int healAmount = 2;
+        const Canis::Vector3 allyPosition = ally->GetComponent<Canis::Transform>().GetGlobalPosition();
+        if (glm::distance(healerPosition, allyPosition) > detectionRange)
+            continue;
 
-            int newHP = currentHP + healAmount;
-            if (newHP > maxHP) {
-                newHP = maxHP;
-            }
-
-            brawler -> Heal(newHP);
-
-            // const_cast<HealerStateMachine*>(this)->healCooldown = healDelay;
-                        
-            Debug::Log("how often is this triggering?");
-
-            return ally;
+        if (currentHP < lowestHealthFound) {
+            lowestHealthFound = currentHP;
+            targetToHeal = ally;
         }
     }
     
     return targetToHeal;
-    Debug::Log("FWT return targetToHeal (end)");
-    return nullptr;
 } 
 
 HealerStateMachine::HealerStateMachine(Canis::Entity& _entity) :
@@ -85,6 +75,8 @@ void RegisterHealerStateMachineScript(Canis::App& _app)
     // RegisterAccessorProperty(healerStateMachineConf, AICombat::HealerStateMachine, chaseState, moveSpeed);
 
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, moveSpeed);
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, detectionRange);
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, healAmount);
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, maxHealth);
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, teamTag);
 
@@ -114,44 +106,54 @@ void HealerStateMachine::Create() {}
 void HealerStateMachine::Ready() 
 {
     m_currentHealth = std::max(maxHealth, 1);
-
+    m_healAccumulator = 0.0f;
+    m_stateTime = 0.0f;
     m_useFirstHitSfx = true;
+
+    if (entity.HasComponent<Canis::Material>())
+    {
+        m_baseColor = entity.GetComponent<Canis::Material>().color;
+        m_hasBaseColor = true;
+    }
 }
 
 void HealerStateMachine::Update(float _dt)  
 {
     if (healCooldown > 0.0f) {
-        healCooldown -= _dt;
+        healCooldown = std::max(0.0f, healCooldown - _dt);
+        return;
     }
-    else{
     
     if (!IsAlive())
-            return;
+        return;
 
     Canis::Entity* target = FindWoundedTeammate();
-    if (!target) return;
-
-    if (target) {
-        BrawlerStateMachine* brawler = target->GetScript<BrawlerStateMachine>();
-
-        Canis::Transform& targetTrans = target->GetComponent<Canis::Transform>();
-
-        float angle = targetTrans.rotation.y;
-
-        Canis::Vector3 forward = { sin(angle), 0.0f, cos(angle)};
-
-        Canis::Vector3 targetPos = targetTrans.GetGlobalPosition();
-        Canis::Vector3 behindPos = targetTrans.GetGlobalPosition() - (forward * 2.0f);
-
-        MoveTowards(behindPos, moveSpeed, _dt);
-
-        m_healAccumulator += 2.0f * _dt;
-        if (m_healAccumulator >= 1.0f) {
-            int healAmount = static_cast<int>(m_healAccumulator);
-            brawler->Heal(healAmount);
-            m_healAccumulator -= static_cast<float>(healAmount);
-        }
+    if (target == nullptr) {
+        m_healAccumulator = 0.0f;
+        return;
     }
+
+    BrawlerStateMachine* brawler = target->GetScript<BrawlerStateMachine>();
+    if (brawler == nullptr || !brawler->IsAlive() || !target->HasComponent<Canis::Transform>()) {
+        m_healAccumulator = 0.0f;
+        return;
+    }
+
+    Canis::Transform& targetTrans = target->GetComponent<Canis::Transform>();
+
+    float angle = targetTrans.rotation.y;
+
+    Canis::Vector3 forward = { std::sin(angle), 0.0f, std::cos(angle) };
+
+    Canis::Vector3 behindPos = targetTrans.GetGlobalPosition() - (forward * 2.0f);
+
+    MoveTowards(behindPos, moveSpeed, _dt);
+
+    m_healAccumulator += static_cast<float>(std::max(healAmount, 0)) * _dt;
+    if (m_healAccumulator >= 1.0f) {
+        const int healingToApply = static_cast<int>(m_healAccumulator);
+        brawler->Heal(healingToApply);
+        m_healAccumulator -= static_cast<float>(healingToApply);
     }
 }
 
