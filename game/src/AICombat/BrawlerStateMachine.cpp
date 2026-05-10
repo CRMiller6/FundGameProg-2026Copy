@@ -316,6 +316,10 @@ namespace AICombat
         return m_currentHealth;
     }
 
+    void BrawlerStateMachine::Healing(int newHealth){
+        m_currentHealth = std::clamp(newHealth, 0, maxHealth);
+    }
+
     void BrawlerStateMachine::ResetHammerPose()
     {
         SetHammerSwing(0.0f);

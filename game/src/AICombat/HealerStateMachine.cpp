@@ -24,23 +24,24 @@ HealState::HealState(SuperPupUtilities::StateMachine& _stateMachine) :
 Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
     Debug::Log("FindWoundedTeammate starts"); 
     if (teamTag.empty()) {
-        return nullptr;
         Debug::Log("teamTag is empty");
+        return nullptr;
     }
     else
     {
         Debug::Log("teamTag is not empty");
     }
     
+    Debug::Log("FWT");
     
     Canis::Entity* targetToHeal = nullptr;
-    if (!targetToHeal)
-    {
-        Debug::Log("no target");
-    }
-    else{
-        Debug::Log("yes target");
-    }
+    // if (!targetToHeal)
+    // {
+    //     Debug::Log("no target");
+    // }
+    // else{
+    //     Debug::Log("yes target");
+    // }
 
     int lowestHealthFound = 999999;
 
@@ -48,26 +49,44 @@ Canis::Entity* HealerStateMachine::FindWoundedTeammate() const {
 
     for (Canis::Entity* ally : entity.scene.GetEntitiesWithTag(teamTag)) {
         Debug::Log("FWT for loop");
-        if (!ally || ally == &entity || !ally->active) continue;
+        if (!ally || ally == &entity || !ally->active) {
+            Debug::Log ("!ally || ally == &entity || !ally->active");
+        }
         
         BrawlerStateMachine* brawler = ally->GetScript<BrawlerStateMachine>();
+        Debug::Log ("got the brawlerstatemachine script in FWT");
         
         if (brawler && brawler->IsAlive()) {
+            Debug::Log ("if brawler is alive");
             int currentHP = brawler->GetCurrentHealth();
             int maxHP = brawler->maxHealth;
+
+            int healAmount = 2;
+
+            int newHP = currentHP + healAmount;
+            if (newHP > maxHP) {
+                newHP = maxHP;
+            }
+
+            brawler -> Heal(newHP);
+
+
+
             
-            if (currentHP < maxHP) { 
+            // if (currentHP < maxHP) { 
+                // Debug::Log ("currentHP < maxHP");
                 // float dist = glm::distance(myPos, ally->GetComponent<Canis::Transform>().GetGlobalPosition());
                 
                 // if (dist <= detectionRange) {
-                    if (currentHP < maxHP) {
-                        if (currentHP < lowestHealthFound){
-                            lowestHealthFound = currentHP;
-                            targetToHeal = ally;
-                        }
-                    }
+                    // if (currentHP < maxHP) {
+                        // if (currentHP < lowestHealthFound){
+                        //     Debug::Log("");
+                            // lowestHealthFound = currentHP;
+                            // targetToHeal = ally;
+                        // }
+                    // }
                 // }
-            }
+            // }
         }
     }
     
@@ -87,6 +106,7 @@ void RegisterHealerStateMachineScript(Canis::App& _app)
 
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, moveSpeed);
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, maxHealth);
+    REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, teamTag);
 
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, hitSfxPath1);
     REGISTER_PROPERTY(healerStateMachineConf, AICombat::HealerStateMachine, hitSfxPath2);
@@ -125,8 +145,6 @@ void HealerStateMachine::Update(float _dt)
 
     Canis::Entity* target = FindWoundedTeammate();
     if (!target) return;
-
-    //Canis::Entity* target = FindWoundedTeammate();
 
     if (target) {
         BrawlerStateMachine* brawler = target->GetScript<BrawlerStateMachine>();

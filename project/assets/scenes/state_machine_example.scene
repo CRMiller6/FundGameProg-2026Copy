@@ -245,8 +245,9 @@ Entities:
       ModelAsset:
         uuid: 17154083321347000101
     AICombat::HealerStateMachine:
-      moveSpeed: 400000
+      moveSpeed: 5
       maxHealth: 30
+      teamTag: Red
       hitSfxPath1:
         uuid: 9101673412543458587
         path: assets/audio/sfx/hit_1.ogg

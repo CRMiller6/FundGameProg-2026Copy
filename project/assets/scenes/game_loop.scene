@@ -857,7 +857,7 @@ Entities:
     Canis::RectTransform:
       active: true
       position: [0, 0]
-      size: [98.99999, 33]
+      size: [99, 33]
       scale: [1, 1]
       anchorMin: [0.5, 0.5]
       anchorMax: [0.5, 0.5]
@@ -1109,3 +1109,52 @@ Entities:
       color: [0.97, 0.77, 0.32, 1]
       ModelAsset:
         uuid: 17154083321347000101
+  - Entity: 12368057446912554851
+    Name: Text
+    Tag: ""
+    Canis::RectTransform:
+      active: true
+      position: [0, 0]
+      size: [50, 33]
+      scale: [1, 1]
+      anchorMin: [1, 1]
+      anchorMax: [1, 1]
+      pivot: [1, 1]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 7275603682416541389
+      children:
+        []
+    Canis::Text:
+      text: Text
+      color: [1, 1, 1, 1]
+      alignment: 2
+      horizontalBoundary: 0
+      FontAsset:
+        uuid: 14618725492368012463
+        fontSize: 32
+  - Entity: 7275603682416541389
+    Name: Canvas
+    Tag: ""
+    Canis::Canvas:
+      active: true
+      renderMode: 0
+      scaleMode: 1
+      screenSize: [1280, 800]
+    Canis::RectTransform:
+      active: true
+      position: [0, 0]
+      size: [0, 0]
+      scale: [1, 1]
+      anchorMin: [0, 0]
+      anchorMax: [1, 1]
+      pivot: [0.5, 0.5]
+      originOffset: [0, 0]
+      depth: 0.001
+      rotation: 0
+      rotationOriginOffset: [0, 0]
+      parent: 0
+      children:
+        - 12368057446912554851

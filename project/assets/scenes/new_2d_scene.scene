@@ -45,6 +45,9 @@ Entities:
       parent: 0
       children:
         []
+    RollABall::StartMenu:
+      gameScene: ~
+      ecsSampleScene: ~
   - Entity: 208896853212074174
     Name: Welcome
     Tag: ""
@@ -98,9 +101,9 @@ Entities:
         uuid: 16060716090729117806
     Canis::UIButton:
       active: true
-      targetEntity: 0
-      targetScript: ""
-      actionName: ""
+      targetEntity: 13303910474606696800
+      targetScript: RollABall::StartMenu
+      actionName: Play
       hoverColor: [0.19, 0.25, 0.34, 1]
       pressedColor: [0.1, 0.14, 0.18, 1]
       hoverScale: 1.03
@@ -184,9 +187,9 @@ Entities:
         uuid: 16060716090729117806
     Canis::UIButton:
       active: true
-      targetEntity: 0
-      targetScript: ""
-      actionName: ""
+      targetEntity: 13303910474606696800
+      targetScript: RollABall::StartMenu
+      actionName: Quit
       hoverColor: [0.19, 0.25, 0.34, 1]
       pressedColor: [0.1, 0.14, 0.18, 1]
       hoverScale: 1.03

@@ -50,6 +50,8 @@ namespace AICombat
     class BrawlerStateMachine : public SuperPupUtilities::StateMachine
     {
     public:
+        void Healing(int newHealth);
+
         static constexpr const char* ScriptName = "AICombat::BrawlerStateMachine";
 
         std::string targetTag = "";
