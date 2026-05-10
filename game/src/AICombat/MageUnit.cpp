@@ -82,55 +82,42 @@ namespace AICombat
 
     void MageUnit::Update(float _dt)
     {
-        // Debug::Log("MageUnit Update");
-
-        if (!entity.HasComponent<Canis::Transform>()) {
-            Debug::Log("does not have Canis::Transform");
+        if (!entity.HasComponent<Canis::Transform>())
             return;
-        }
 
-        if (m_target == nullptr || !m_target->active || m_target->tag != targetTag) {
-            Debug::Log("no target will find target");
+        if (m_target == nullptr || !m_target->active || m_target->tag != targetTag)
             m_target = FindTarget();
-        }
 
-        if (m_target == nullptr || !m_target->HasComponent<Canis::Transform>()) {
-            Debug::Log("if no target or target does not have Transform");
+        if (m_target == nullptr || !m_target->HasComponent<Canis::Transform>())
             return; 
-        }
 
         Canis::Transform& transform = entity.GetComponent<Canis::Transform>();
         const Canis::Vector3 targetPosition = m_target->GetComponent<Canis::Transform>().GetGlobalPosition();
         Canis::Vector3 toTarget = targetPosition - transform.GetGlobalPosition();
-        toTarget.y = 0.0f;
+        Canis::Vector3 flatToTarget = toTarget;
+        flatToTarget.y = 0.0f;
 
-        if (glm::length(toTarget) <= 0.001f) {
-            Debug::Log("length to target is smaller then 0.001");
-            return; }
+        if (glm::length(flatToTarget) <= 0.001f)
+            return;
 
-        const float angleError = RotateTowards(transform, toTarget, _dt);
-        if (m_fireCooldown > 0.0f) {
+        const float angleError = RotateTowards(transform, flatToTarget, _dt);
+        if (m_fireCooldown > 0.0f)
             m_fireCooldown -= _dt;
-            Debug::Log("First m_fireCooldown");
-        }
 
-        if (m_fireCooldown > 0.0f) {
-            Debug::Log("Second m_fireCooldown");}
-            // return; }
+        if (m_fireCooldown > 0.0f)
+            return;
 
         const float fireAngleThreshold = fireAngleThresholdDegrees * Canis::DEG2RAD;
-        if (std::abs(angleError) > fireAngleThreshold) {
-            Debug::Log("angleError > fireAngleThreshold");
-            return; }
+        if (std::abs(angleError) > fireAngleThreshold)
+            return;
 
-        Fire(GetMuzzlePosition(transform), toTarget);
-        Debug::Log("Fire");
+        const Canis::Vector3 muzzlePosition = GetMuzzlePosition(transform);
+        Fire(muzzlePosition, targetPosition - muzzlePosition);
         m_fireCooldown = fireInterval;
     }
 
     Canis::Entity* MageUnit::FindTarget() const
     {
-        Debug::Log("MageUnit FindTarget");
         for (Canis::Entity* candidate : entity.scene.GetEntitiesWithTag(targetTag))
         {
             if (candidate != nullptr && candidate->active)
@@ -142,7 +129,6 @@ namespace AICombat
 
     Canis::Vector3 MageUnit::GetMuzzlePosition(const Canis::Transform& _transform) const
     {
-        Debug::Log("MageUnit GetMuzzlePosition");
         return _transform.GetGlobalPosition()
             + (_transform.GetRight() * muzzleOffset.x)
             + (_transform.GetUp() * muzzleOffset.y)
@@ -151,7 +137,6 @@ namespace AICombat
 
     float MageUnit::RotateTowards(Canis::Transform& _transform, const Canis::Vector3& _direction, float _dt) const
     {
-        Debug::Log("MageUnit RotateTowards");
         const Canis::Vector3 flatDirection = glm::normalize(Canis::Vector3(_direction.x, 0.0f, _direction.z));
         const float targetYaw = std::atan2(-flatDirection.x, -flatDirection.z);
         const float yawError = std::remainder(targetYaw - _transform.rotation.y, TAU);
@@ -164,10 +149,16 @@ namespace AICombat
 
     void MageUnit::Fire(const Canis::Vector3& _position, const Canis::Vector3& _direction)
     {
-        Debug::Log("MageUnit Fire");
-        const Canis::Vector3 flatDirection = glm::normalize(Canis::Vector3(_direction.x, 0.0f, _direction.z));
-        const float yaw = std::atan2(-flatDirection.x, -flatDirection.z);
-        const Canis::Vector3 rotation = Canis::Vector3(0.0f, yaw, 0.0f);
+        const float directionLength = glm::length(_direction);
+        const Canis::Vector3 flatDirection = Canis::Vector3(_direction.x, 0.0f, _direction.z);
+        if (directionLength <= 0.001f || glm::length(flatDirection) <= 0.001f)
+            return;
+
+        const Canis::Vector3 normalizedDirection = _direction / directionLength;
+        const Canis::Vector3 normalizedFlatDirection = glm::normalize(flatDirection);
+        const float pitch = std::asin(std::clamp(normalizedDirection.y, -1.0f, 1.0f));
+        const float yaw = std::atan2(-normalizedFlatDirection.x, -normalizedFlatDirection.z);
+        const Canis::Vector3 rotation = Canis::Vector3(pitch, yaw, 0.0f);
 
         auto* pool = SuperPupUtilities::SimpleObjectPool::Instance;
 
@@ -175,7 +166,7 @@ namespace AICombat
             Debug::Log("Pool is null");
             return; }
 
-        Canis::Entity* projectile = pool->Spawn("laser_bullet", _position, rotation);
+        Canis::Entity* projectile = pool->Spawn(poolCode, _position, rotation);
 
         if (projectile == nullptr) {
             Debug::Log("projectile is null");
@@ -183,10 +174,12 @@ namespace AICombat
 
         if (SuperPupUtilities::Bullet* bullet = projectile->GetScript<SuperPupUtilities::Bullet>())
         {
-            Debug::Log("getscript bullet");
             bullet->speed = projectileSpeed*10.0f;
             bullet->lifeTime = projectileLifeTime;
             bullet->hitImpulse = projectileHitImpulse;
+            bullet->collisionMask = Canis::Rigidbody::DefaultMask;
+            if (m_target != nullptr && m_target->HasComponent<Canis::Rigidbody>())
+                bullet->collisionMask = m_target->GetComponent<Canis::Rigidbody>().layer;
             bullet->Launch();
         }
     }

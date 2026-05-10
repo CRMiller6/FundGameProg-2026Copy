@@ -63,12 +63,13 @@ namespace RollABall
         Canis::Transform& transform = entity.GetComponent<Canis::Transform>();
         const Canis::Vector3 targetPosition = m_target->GetComponent<Canis::Transform>().GetGlobalPosition();
         Canis::Vector3 toTarget = targetPosition - transform.GetGlobalPosition();
-        toTarget.y = 0.0f;
+        Canis::Vector3 flatToTarget = toTarget;
+        flatToTarget.y = 0.0f;
 
-        if (glm::length(toTarget) <= 0.001f)
+        if (glm::length(flatToTarget) <= 0.001f)
             return;
 
-        const float angleError = RotateTowards(transform, toTarget, _dt);
+        const float angleError = RotateTowards(transform, flatToTarget, _dt);
         if (m_fireCooldown > 0.0f)
             m_fireCooldown -= _dt;
 
@@ -79,7 +80,8 @@ namespace RollABall
         if (std::abs(angleError) > fireAngleThreshold)
             return;
 
-        Fire(GetMuzzlePosition(transform), toTarget);
+        const Canis::Vector3 muzzlePosition = GetMuzzlePosition(transform);
+        Fire(muzzlePosition, targetPosition - muzzlePosition);
         m_fireCooldown = fireInterval;
     }
 
@@ -116,16 +118,23 @@ namespace RollABall
 
     void LaserTagTurret::Fire(const Canis::Vector3& _position, const Canis::Vector3& _direction)
     {
-        const Canis::Vector3 flatDirection = glm::normalize(Canis::Vector3(_direction.x, 0.0f, _direction.z));
-        const float yaw = std::atan2(-flatDirection.x, -flatDirection.z);
-        const Canis::Vector3 rotation = Canis::Vector3(0.0f, yaw, 0.0f);
+        const float directionLength = glm::length(_direction);
+        const Canis::Vector3 flatDirection = Canis::Vector3(_direction.x, 0.0f, _direction.z);
+        if (directionLength <= 0.001f || glm::length(flatDirection) <= 0.001f)
+            return;
+
+        const Canis::Vector3 normalizedDirection = _direction / directionLength;
+        const Canis::Vector3 normalizedFlatDirection = glm::normalize(flatDirection);
+        const float pitch = std::asin(std::clamp(normalizedDirection.y, -1.0f, 1.0f));
+        const float yaw = std::atan2(-normalizedFlatDirection.x, -normalizedFlatDirection.z);
+        const Canis::Vector3 rotation = Canis::Vector3(pitch, yaw, 0.0f);
 
         auto* pool = SuperPupUtilities::SimpleObjectPool::Instance;
 
         if (pool == nullptr)
             return;
 
-        Canis::Entity* projectile = pool->Spawn("laser_bullet", _position, rotation);
+        Canis::Entity* projectile = pool->Spawn(poolCode, _position, rotation);
 
         if (projectile == nullptr)
             return;
@@ -135,6 +144,9 @@ namespace RollABall
             bullet->speed = projectileSpeed*10.0f;
             bullet->lifeTime = projectileLifeTime;
             bullet->hitImpulse = projectileHitImpulse;
+            bullet->collisionMask = Canis::Rigidbody::DefaultMask;
+            if (m_target != nullptr && m_target->HasComponent<Canis::Rigidbody>())
+                bullet->collisionMask = m_target->GetComponent<Canis::Rigidbody>().layer;
             bullet->Launch();
         }
     }
